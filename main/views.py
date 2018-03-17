@@ -5,4 +5,4 @@ from main import app
 @app.route("/index")
 @app.route("/threejs")
 def hello():
-    return render_template("lung_show.html")
+    return render_template("index.html")
