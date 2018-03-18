@@ -1,8 +1,16 @@
-<html>
-  <head>
-    <title>{{title}}</title>
-  </head>
-  <body>
-      <h1>Hello, {{user.nickname}}!</h1>
-  </body>
-</html>
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Index{% endblock %}
+
+{% block content %}
+  <div>
+  <h1>Sum Calc</h1>
+	<form method="POST">
+		{{ form.hidden_tag() }}
+		{{form.input_a}}</br>
+		{{form.input_b}}</br>
+		<input type="submit" value="CALC">
+	</form>
+	<h1>{{output}}</h1>
+  </div>
+{% endblock %}
