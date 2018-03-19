@@ -1,145 +1,107 @@
-<!DOCTYPE html>
-<html>
-	<head>
-    <meta charset=utf-8>
-    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>Lung_Show</title>
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="../static/css/ic-style.css">
     <style>
-        @font-face {
-            font-family: Oswald-Regular;
-            src: url("/static/font/Oswald-Regular.ttf");
-        }
-
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-        }
-
-        #prograssMask {
-            background: rgba(255, 255, 255, 1);
-            width: 100%;
-            height: 100%;
-            position: fixed;
-            top: 0;
-        }
-
-        #prograss-box {
-            top: calc(50% - 150px);
-            left: calc(50% - 150px);
-            width: 300px;
-            height: 300px;
-            background: #fff;
-            position: absolute;
-        }
-
-        #prograss-text {
-            position: absolute;
-            text-align: center;
-            width: 100%;
-            top: 25%;
-            color: #999999;
-            font-family: "Oswald-Regular";
-        }
-
-        #prograss-title {
-            font-size: 20px;
-        }
-
-        #prograss-meta {
-            font-size: 50px;
-        }
-
-        #info-box {
-            position: absolute;
-            text-align: center;
-            width: 100%;
-            top: 15%;
-            color: #999999;
-            font-family: "font-family: Circular !important;";
-            background: #fff;
-        }
-
-        #info-title {
-            font-size: 20px;
-            color: #e1e1e1;
-        }
-
-        #info-text {
-            font-size: 40px;
-            font-weight: 800;
-        }
-
-        #toggle-box {
-            position: absolute;
-            bottom: 15%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100px;
-            background: #000;
-        }
-
-        input {
+        input#displaytoggle {
             display: none;
         }
 
         label {
             cursor: pointer;
+            margin-bottom: 0px;
         }
 
-        label:before {
-            content: '';
-            display: inline-block;
-            background: #fff;
+        label#displaytoggleLabel {
             height: 50px;
             width: 50px;
             border-radius: 100%;
             box-sizing: border-box;
             border: 10px solid #eee;
             position: absolute;
+            transition: all .3s ease;
+
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            transition: all .3s ease;
         }
 
-        input:checked+label:before {
+        input#displaytoggle:checked+label#displaytoggleLabel {
             border-color: #eee;
             height: 15px;
             width: 15px;
             border-width: 15px;
         }
     </style>
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="../static/js/3D/three.min.js"></script>
+    <script src="../static/js/3D/stats.min.js"></script>
+    <script src="../static/js/3D/OrbitControls.js"></script>
+    <script src='../static/js/3D/dat.gui.min.js'></script>
+    <script src="../static/js/3D/OBJLoader.js"></script>
+    <script src="../static/js/3D/OBMLoader.min.js"></script>
+    <script src="../static/js/3D/MTLLoader.js"></script>
+    <script src="../static/js/3D/tween.min.js"></script>
+    <title>icrdr's Blog</title>
 </head>
 
 <body>
-    <script src="/static/js/3D/three.min.js"></script>
-    <script src="/static/js/3D/stats.min.js"></script>
-    <script src="/static/js/3D/OrbitControls.js"></script>
-    <script src='/static/js/3D/dat.gui.min.js'></script>
-    <script src="/static/js/3D/OBJLoader.js"></script>
-    <script src="/static/js/3D/OBMLoader.min.js"></script>
-    <script src="/static/js/3D/MTLLoader.js"></script>
-    <script src="/static/js/jquery-3.1.1.min.js"></script>
-    <script src="/static/js/3D/tween.min.js"></script>
-    <div id="container">
-        <div id="render"></div>
-        <div id="info-box">
-            <div id="info-title">LUNG SEGMENT</div>
-            <div id="info-text">LEFT S1</div>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
+        <a class="navbar-brand mb-0 h1" href="#">
+            <img src="../static/img/logo_small.png" width="30" height="30" class="d-inline-block align-middle" alt="logo">
+            Icrdr
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMainMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMainMenu">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Blog</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Experiment</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/experiment/lungSeg">Lung Segment Display</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/experiment/simplePY">Simple Python Function</a>
+                    </div>
+                </li>
+            </ul>
         </div>
-        <div id="toggle-box">
-            <input id="displaytoggle" type="checkbox" name="display">
-            <label for="displaytoggle"></label>
-        </div>
-        <div id="prograssMask">
-            <div id="prograss-box">
-                <div id="prograss-svg">
-                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 100 100">
+    </nav>
+    
+    <div id="container" class="container position-relative" style="height: calc(100vh - 90px); min-height:500px">
+        <div class="ic-card bg-light box-shadow overflow-hide h-100">
+            <div class="card-body position-relative text-center h-100">
+                <div id="info-container">
+                    <span id="info-text" class="text-secondary h2">LEFT S1</span>
+                </div>
+                <div id="canvas-container" class="h-100"></div>
+                <div id="ctl-container" class="position-absolute" style="bottom: 20px; left: 50%; transform: translateX(-50%);">
+                    <div class="position-relative" style="height: 50px;">
+                        <input id="displaytoggle" type="checkbox" name="display">
+                        <label id="displaytoggleLabel" for="displaytoggle"></label>
+                    </div>
+                </div>
+                <div id="mask-container" class="position-absolute bg-dark align-items-center text-secondary w-100 h-100" style="display: flex; top: 0; left: 50%; transform: translateX(-50%);">
+                    <div id="prograss-item" class="mx-auto">
+                        <div>
+                            <span class="h3">loading...</span></br>
+                            <span id="prograss-meta" class="h3">0%</span>
+                        </div>
+                        <div id="prograss-svg" class="mx-auto mt-4 w-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 100 100">
 <defs>
   <mask id="mask" x="0" y="0" width="100" height="100" >
         <g style="stroke: none; fill: #fff;">
@@ -160,16 +122,16 @@
 </defs>
 <rect id="prograss-bar" x="0" y="80" width="100" height="80" style="stroke: none; fill: #efefef; mask: url(#mask)"/>
 </svg>
-                </div>
-                <div id="prograss-text">
-                    <div id="prograss-title">loading...</div>
-                    <div id="prograss-meta">0%</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
     <script>
+        var canvasParent = $("#canvas-container");
+        var renderW = canvasParent.width();
+        var renderH = canvasParent.height();
         var renderer, scene, camera;
         var stats, gui;
         var raycaster;
@@ -218,7 +180,7 @@
 
             if (progress_meta >= 100) {
                 window.clearInterval(progress_interval);
-                $("#prograssMask").fadeOut()(600);
+                $("#mask-container").hide(1500);
             }
         }
 
@@ -242,40 +204,40 @@
             mat_lung_R_S8.color.setHex(color_R_S8);
             mat_lung_R_S9.color.setHex(color_R_S9);
             mat_lung_R_S10.color.setHex(color_R_S10);
-            
+
             if (!displaymode) {
                 for (var i = 0; i < mat_lung_segments.length; i++) {
-                    if (mat_lung_segments[i] != target_mat&&mat_lung_segments[i].opacity!=1){
+                    if (mat_lung_segments[i] != target_mat && mat_lung_segments[i].opacity != 1) {
                         new TWEEN.Tween(mat_lung_segments[i]).to({
-                        opacity: 1,
-                    }, fadeTime).
-                    onComplete(function() {
-                        this.transparent = false;
-                    }).start();
+                            opacity: 1,
+                        }, fadeTime).
+                        onComplete(function() {
+                            this.transparent = false;
+                        }).start();
                         //mat_lung_segments[i].opacity = 1;
                         //mat_lung_segments[i].transparent = false;
                     }
-                    
+
                 }
                 if (target_mat) {
                     target_mat.transparent = true;
                     target_mat.color.setHex(0xffffff);
                     new TWEEN.Tween(target_mat).to({
-                            opacity: 0.2,
-                        }, fadeTime).start();
+                        opacity: 0.2,
+                    }, fadeTime).start();
                     //target_mat.opacity = 0.2;
                 }
             } else {
                 for (var i = 0; i < mat_lung_segments.length; i++) {
-                    if (mat_lung_segments[i] != target_mat){
-                        
+                    if (mat_lung_segments[i] != target_mat) {
+
                         mat_lung_segments[i].transparent = true;
                         mat_lung_segments[i].color.setHex(0xffffff);
-                        
+
                         new TWEEN.Tween(mat_lung_segments[i]).to({
                             opacity: 0.2,
                         }, fadeTime).start();
-                        
+
                         //mat_lung_segments[i].opacity = 0.2;
                     }
                 }
@@ -286,72 +248,69 @@
                     onComplete(function() {
                         target_mat.transparent = false;
                     }).start();
-                    
+
                     //target_mat.opacity = 1;
                     //target_mat.transparent = false;
                 }
             }
-            if (target_mat != null) {
-                $("#info-box").fadeIn(200);
-            }
 
             switch (target_mat) {
                 case mat_lung_L_S1_2:
-                    $("#info-text").html("LEFT S1-2");
+                    $("#info-text").html("Left S1-2");
                     break;
                 case mat_lung_L_S3:
-                    $("#info-text").html("LEFT S3");
+                    $("#info-text").html("Left S3");
                     break;
                 case mat_lung_L_S4:
-                    $("#info-text").html("LEFT S4");
+                    $("#info-text").html("Left S4");
                     break;
                 case mat_lung_L_S5:
-                    $("#info-text").html("LEFT S5");
+                    $("#info-text").html("Left S5");
                     break;
                 case mat_lung_L_S6:
-                    $("#info-text").html("LEFT S6");
+                    $("#info-text").html("Left S6");
                     break;
                 case mat_lung_L_S7_8:
-                    $("#info-text").html("LEFT S7-8");
+                    $("#info-text").html("Left S7-8");
                     break;
                 case mat_lung_L_S9:
-                    $("#info-text").html("LEFT S9");
+                    $("#info-text").html("Left S9");
                     break;
                 case mat_lung_L_S10:
-                    $("#info-text").html("LEFT S10");
+                    $("#info-text").html("Left S10");
                     break;
                 case mat_lung_R_S1:
-                    $("#info-text").html("RIGHT S1");
+                    $("#info-text").html("Right S1");
                     break;
                 case mat_lung_R_S2:
-                    $("#info-text").html("RIGHT S2");
+                    $("#info-text").html("Right S2");
                     break;
                 case mat_lung_R_S3:
-                    $("#info-text").html("RIGHT S3");
+                    $("#info-text").html("Right S3");
                     break;
                 case mat_lung_R_S4:
-                    $("#info-text").html("RIGHT S4");
+                    $("#info-text").html("Right S4");
                     break;
                 case mat_lung_R_S5:
-                    $("#info-text").html("RIGHT S5");
+                    $("#info-text").html("Right S5");
                     break;
                 case mat_lung_R_S6:
-                    $("#info-text").html("RIGHT S6");
+                    $("#info-text").html("Right S6");
                     break;
                 case mat_lung_R_S7:
-                    $("#info-text").html("RIGHT S7");
+                    $("#info-text").html("Right S7");
                     break;
                 case mat_lung_R_S8:
-                    $("#info-text").html("RIGHT S8");
+                    $("#info-text").html("Right S8");
                     break;
                 case mat_lung_R_S9:
-                    $("#info-text").html("RIGHT S9");
+                    $("#info-text").html("Right S9");
                     break;
                 case mat_lung_R_S10:
-                    $("#info-text").html("RIGHT S10");
+                    $("#info-text").html("Right S10");
                     break;
                 default:
-                    $("#info-box").fadeOut(200);
+                    $("#info-text").html("Touch it 👇");
             }
         }
 
@@ -371,17 +330,18 @@
         function init() {
             //渲染器设置
             renderer = new THREE.WebGLRenderer({
-                antialias: true
+                antialias: true,
+                alpha: true
             });
-            renderer.setClearColor(0xffffff);
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            $("#render").append(renderer.domElement);
+            renderer.setClearColor(0xffffff, 0);
+            renderer.setSize(renderW, renderH);
+            $("#canvas-container").append(renderer.domElement);
             renderer.shadowMap.enabled = false;
 
             //设置场景和摄像机
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 10000);
-            camera.position.set(0, 1, -7);
+            camera = new THREE.PerspectiveCamera(50, renderW / renderH, 0.1, 10000);
+            camera.position.set(0, 1, -4);
 
             //设置网格
             var helper = new THREE.GridHelper(1000, 40, 0x303030, 0x303030);
@@ -441,9 +401,9 @@
             group_lung = new THREE.Group();
             scene.add(group_lung);
 
-            mtlLoader.setPath('/static/obj/lung/');
-            objLoader.setPath('/static/obj/lung/');
-            obmloader.setPath('/static/obj/lung/');
+            mtlLoader.setPath('../static/obj/lung/');
+            objLoader.setPath('../static/obj/lung/');
+            obmloader.setPath('../static/obj/lung/');
 
             mtlLoader.load('bro2.mtl', function(materials) {
                 materials.preload();
@@ -692,7 +652,7 @@
             controls.target.set(0, 0.7, 0);
             controls.rotateSpeed = 0.2;
             controls.maxDistance = 7;
-            controls.minDistance = 5;
+            controls.minDistance = 3;
 
             raycaster = new THREE.Raycaster();
             mouse = new THREE.Vector2();
@@ -704,8 +664,8 @@
 
         $("canvas").on("click", function(e) {
             e.preventDefault();
-            mouse.x = (e.clientX / renderer.domElement.clientWidth) * 2 - 1;
-            mouse.y = -(e.clientY / renderer.domElement.clientHeight) * 2 + 1;
+            mouse.x = (e.offsetX / canvasParent.width()) * 2 - 1;
+            mouse.y = -(e.offsetY / canvasParent.height()) * 2 + 1;
             raycastSegment();
         });
 
@@ -746,11 +706,17 @@
         }
 
         function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.aspect = canvasParent.width() / canvasParent.height();
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(canvasParent.width(), canvasParent.height());
 
         }
     </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 </html>

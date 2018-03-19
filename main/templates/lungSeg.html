@@ -1,0 +1,688 @@
+{% extends "base_navbar.html" %}
+
+{% block title %}
+<title>Lung Segment</title>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="../static/css/ic-style.css">
+<style>
+    input#displaytoggle {
+        display: none;
+    }
+
+    label {
+        cursor: pointer;
+        margin-bottom: 0px;
+    }
+
+    label#displaytoggleLabel {
+        height: 50px;
+        width: 50px;
+        border-radius: 100%;
+        box-sizing: border-box;
+        border: 10px solid #eee;
+        position: absolute;
+        transition: all .3s ease;
+
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    input#displaytoggle:checked+label#displaytoggleLabel {
+        border-color: #eee;
+        height: 15px;
+        width: 15px;
+        border-width: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="../static/js/3D/three.min.js"></script>
+<script src="../static/js/3D/stats.min.js"></script>
+<script src="../static/js/3D/OrbitControls.js"></script>
+<script src='../static/js/3D/dat.gui.min.js'></script>
+<script src="../static/js/3D/OBJLoader.js"></script>
+<script src="../static/js/3D/OBMLoader.min.js"></script>
+<script src="../static/js/3D/MTLLoader.js"></script>
+<script src="../static/js/3D/tween.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div id="container" class="container position-relative" style="height: calc(100vh - 90px); min-height:500px">
+    <div class="ic-card bg-light box-shadow overflow-hide h-100">
+        <div class="card-body position-relative text-center h-100">
+            <div id="info-container">
+                <span id="info-text" class="text-secondary h2">LEFT S1</span>
+            </div>
+            <div id="canvas-container" class="h-100"></div>
+            <div id="ctl-container" class="position-absolute" style="bottom: 20px; left: 50%; transform: translateX(-50%);">
+                <div class="position-relative" style="height: 50px;">
+                    <input id="displaytoggle" type="checkbox" name="display">
+                    <label id="displaytoggleLabel" for="displaytoggle"></label>
+                </div>
+            </div>
+            <div id="mask-container" class="position-absolute bg-dark align-items-center text-secondary w-100 h-100" style="display: flex; top: 0; left: 50%; transform: translateX(-50%);">
+                <div id="prograss-item" class="mx-auto">
+                    <div>
+                        <span class="h3">loading...</span></br>
+                        <span id="prograss-meta" class="h3">0%</span>
+                    </div>
+                    <div id="prograss-svg" class="mx-auto mt-4 w-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 100 100">
+<defs>
+  <mask id="mask" x="0" y="0" width="100" height="100" >
+        <g style="stroke: none; fill: #fff;">
+        <g transform="translate(3,-10) scale(0.1)">
+		<path d="M921.983,620.366c-18.399-93.701-59.1-182.8-111.3-262.3c-23.8-36.2-52.399-70-83.8-99.9c-24.4-23.2-59-56-95.2-55.3
+			c-0.399,0-0.8,0-1.3,0c-58.6,2.5-78.3,71.4-87.7,118.6c-5.7,28.4-9.2,57.2-10.8,86.2c-17.1-19.399-25.8-47.1-25.8-82.6v-120.1
+			h-38.3h-38.301v120.1c0,35.6-8.699,63.3-25.8,82.6c-1.6-29-5.2-57.8-10.8-86.2c-9.4-47.2-29.1-116.1-87.7-118.6
+			c-0.399,0-0.8,0-1.3,0c-36.3-0.8-70.9,32.1-95.2,55.3c-31.4,29.8-60,63.7-83.8,99.9c-52.4,79.5-93,168.599-111.4,262.3
+			c-12.9,65.799-41.2,229.4,62.5,235c60.2,3.199,114.1-48.1,164.2-74c40-20.701,81.3-43.301,109.4-79.6
+			c32.1-41.5,40.2-96.5,47.3-147c2.6-18.602,4.6-37.4,6-56.201c10.6-4.6,22.5-11.1,34.4-20.199c10-7.701,20.699-17.701,30.5-30.701
+			c9.8,13,20.4,23.101,30.5,30.701c11.899,9.1,23.8,15.6,34.399,20.199c1.3,18.801,3.3,37.6,6,56.201
+			c7.101,50.5,15.3,105.5,47.3,147c28,36.299,69.4,59,109.4,79.6c50.1,25.9,104.1,77.199,164.2,74
+			C963.184,849.767,934.884,686.165,921.983,620.366z" />
+		<path d="M506.084,163.966v-54c0-16.6-13.4-30-30-30h-8.3h-8.301c-16.6,0-30,13.4-30,30v54h38.301H506.084z"/>
+	</g>
+    </g>
+  </mask>
+</defs>
+<rect id="prograss-bar" x="0" y="80" width="100" height="80" style="stroke: none; fill: #efefef; mask: url(#mask)"/>
+</svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var canvasParent = $("#canvas-container");
+    var renderW = canvasParent.width();
+    var renderH = canvasParent.height();
+    var renderer, scene, camera;
+    var stats, gui;
+    var raycaster;
+    var mouse;
+    var mat_lung_L_S1_2, mat_lung_L_S3, mat_lung_L_S4, mat_lung_L_S5, mat_lung_L_S6, mat_lung_L_S7_8, mat_lung_L_S9, mat_lung_L_S10;
+    var mat_lung_R_S1, mat_lung_R_S2, mat_lung_R_S3, mat_lung_R_S4, mat_lung_R_S5, mat_lung_R_S6, mat_lung_R_S7, mat_lung_R_S8, mat_lung_R_S9, mat_lung_R_S10;
+    var mat_lung_segments = [];
+    var geos_lung = [];
+    var geo_bro, group_lung;
+    var target_mat;
+    var displaymode = false;
+    var color_L_S1_2 = "0xfd6847",
+        color_L_S3 = "0xffc546",
+        color_L_S4 = "0xb4d64a",
+        color_L_S5 = "0x75e28a",
+        color_L_S6 = "0x947dd1",
+        color_L_S7_8 = "0xa1e0f1",
+        color_L_S9 = "0x89bfff",
+        color_L_S10 = "0x7887e3",
+
+        color_R_S1 = "0xfd6847",
+        color_R_S2 = "0xff8f47",
+        color_R_S3 = "0xffc546",
+        color_R_S4 = "0xb4d64a",
+        color_R_S5 = "0x75e28a",
+        color_R_S6 = "0x947dd1",
+        color_R_S7 = "0x96efd9",
+        color_R_S8 = "0xa1e0f1",
+        color_R_S9 = "0x89bfff",
+        color_R_S10 = "0x7887e3";
+    var progress_meta = 0;
+    var current_progress = 0;
+    var fadeTime = 100;
+    var settings = {
+        "Invert": false,
+    };
+
+    var progress_interval = setInterval(progress, 10);
+
+    function progress() {
+        if (progress_meta < current_progress) {
+            progress_meta++;
+            $("#prograss-bar").attr("y", 80 - progress_meta * 0.8);
+            $("#prograss-meta").html(parseFloat(progress_meta) + "%");
+        }
+
+        if (progress_meta >= 100) {
+            window.clearInterval(progress_interval);
+            $("#mask-container").hide(1500);
+        }
+    }
+
+    function UpdateDisplay() {
+        mat_lung_L_S1_2.color.setHex(color_L_S1_2);
+        mat_lung_L_S3.color.setHex(color_L_S3);
+        mat_lung_L_S4.color.setHex(color_L_S4);
+        mat_lung_L_S5.color.setHex(color_L_S5);
+        mat_lung_L_S6.color.setHex(color_L_S6);
+        mat_lung_L_S7_8.color.setHex(color_L_S7_8);
+        mat_lung_L_S9.color.setHex(color_L_S9);
+        mat_lung_L_S10.color.setHex(color_L_S10);
+
+        mat_lung_R_S1.color.setHex(color_R_S1);
+        mat_lung_R_S2.color.setHex(color_R_S2);
+        mat_lung_R_S3.color.setHex(color_R_S3);
+        mat_lung_R_S4.color.setHex(color_R_S4);
+        mat_lung_R_S5.color.setHex(color_R_S5);
+        mat_lung_R_S6.color.setHex(color_R_S6);
+        mat_lung_R_S7.color.setHex(color_R_S7);
+        mat_lung_R_S8.color.setHex(color_R_S8);
+        mat_lung_R_S9.color.setHex(color_R_S9);
+        mat_lung_R_S10.color.setHex(color_R_S10);
+
+        if (!displaymode) {
+            for (var i = 0; i < mat_lung_segments.length; i++) {
+                if (mat_lung_segments[i] != target_mat && mat_lung_segments[i].opacity != 1) {
+                    new TWEEN.Tween(mat_lung_segments[i]).to({
+                        opacity: 1,
+                    }, fadeTime).
+                    onComplete(function() {
+                        this.transparent = false;
+                    }).start();
+                    //mat_lung_segments[i].opacity = 1;
+                    //mat_lung_segments[i].transparent = false;
+                }
+
+            }
+            if (target_mat) {
+                target_mat.transparent = true;
+                target_mat.color.setHex(0xffffff);
+                new TWEEN.Tween(target_mat).to({
+                    opacity: 0.2,
+                }, fadeTime).start();
+                //target_mat.opacity = 0.2;
+            }
+        } else {
+            for (var i = 0; i < mat_lung_segments.length; i++) {
+                if (mat_lung_segments[i] != target_mat) {
+
+                    mat_lung_segments[i].transparent = true;
+                    mat_lung_segments[i].color.setHex(0xffffff);
+
+                    new TWEEN.Tween(mat_lung_segments[i]).to({
+                        opacity: 0.2,
+                    }, fadeTime).start();
+
+                    //mat_lung_segments[i].opacity = 0.2;
+                }
+            }
+            if (target_mat) {
+                new TWEEN.Tween(target_mat).to({
+                    opacity: 1
+                }, fadeTime).
+                onComplete(function() {
+                    target_mat.transparent = false;
+                }).start();
+
+                //target_mat.opacity = 1;
+                //target_mat.transparent = false;
+            }
+        }
+
+        switch (target_mat) {
+            case mat_lung_L_S1_2:
+                $("#info-text").html("Left S1-2");
+                break;
+            case mat_lung_L_S3:
+                $("#info-text").html("Left S3");
+                break;
+            case mat_lung_L_S4:
+                $("#info-text").html("Left S4");
+                break;
+            case mat_lung_L_S5:
+                $("#info-text").html("Left S5");
+                break;
+            case mat_lung_L_S6:
+                $("#info-text").html("Left S6");
+                break;
+            case mat_lung_L_S7_8:
+                $("#info-text").html("Left S7-8");
+                break;
+            case mat_lung_L_S9:
+                $("#info-text").html("Left S9");
+                break;
+            case mat_lung_L_S10:
+                $("#info-text").html("Left S10");
+                break;
+            case mat_lung_R_S1:
+                $("#info-text").html("Right S1");
+                break;
+            case mat_lung_R_S2:
+                $("#info-text").html("Right S2");
+                break;
+            case mat_lung_R_S3:
+                $("#info-text").html("Right S3");
+                break;
+            case mat_lung_R_S4:
+                $("#info-text").html("Right S4");
+                break;
+            case mat_lung_R_S5:
+                $("#info-text").html("Right S5");
+                break;
+            case mat_lung_R_S6:
+                $("#info-text").html("Right S6");
+                break;
+            case mat_lung_R_S7:
+                $("#info-text").html("Right S7");
+                break;
+            case mat_lung_R_S8:
+                $("#info-text").html("Right S8");
+                break;
+            case mat_lung_R_S9:
+                $("#info-text").html("Right S9");
+                break;
+            case mat_lung_R_S10:
+                $("#info-text").html("Right S10");
+                break;
+            default:
+                $("#info-text").html("Touch it 👇");
+        }
+    }
+
+    //initGui();
+    init();
+    animate();
+
+    // Init gui
+    function initGui() {
+        gui = new dat.GUI();
+        gui.add(settings, 'Invert').onChange(function(value) {
+            displaymode = value;
+            UpdateDisplay();
+        });
+    }
+
+    function init() {
+        //渲染器设置
+        renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true
+        });
+        renderer.setClearColor(0xffffff, 0);
+        renderer.setSize(renderW, renderH);
+        $("#canvas-container").append(renderer.domElement);
+        renderer.shadowMap.enabled = false;
+
+        //设置场景和摄像机
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(50, renderW / renderH, 0.1, 10000);
+        camera.position.set(0, 1, -4);
+
+        //设置网格
+        var helper = new THREE.GridHelper(1000, 40, 0x303030, 0x303030);
+        //scene.add(helper);
+
+        //设置光源
+        var DLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        DLight.position.set(1, 2, -2);
+
+        var Alight = new THREE.AmbientLight(0xffffff, 0.6); // soft white light
+
+        scene.add(DLight);
+        scene.add(Alight);
+
+        //设置材质球
+        mat_lung_L_S1_2 = new THREE.MeshLambertMaterial({});
+        mat_lung_L_S3 = new THREE.MeshLambertMaterial({});
+        mat_lung_L_S4 = new THREE.MeshLambertMaterial({});
+        mat_lung_L_S5 = new THREE.MeshLambertMaterial({});
+        mat_lung_L_S6 = new THREE.MeshLambertMaterial({});
+        mat_lung_L_S7_8 = new THREE.MeshLambertMaterial({});
+        mat_lung_L_S9 = new THREE.MeshLambertMaterial({});
+        mat_lung_L_S10 = new THREE.MeshLambertMaterial({});
+
+        mat_lung_R_S1 = new THREE.MeshLambertMaterial({});
+        mat_lung_R_S2 = new THREE.MeshLambertMaterial({});
+        mat_lung_R_S3 = new THREE.MeshLambertMaterial({});
+        mat_lung_R_S4 = new THREE.MeshLambertMaterial({});
+        mat_lung_R_S5 = new THREE.MeshLambertMaterial({});
+        mat_lung_R_S6 = new THREE.MeshLambertMaterial({});
+        mat_lung_R_S7 = new THREE.MeshLambertMaterial({});
+        mat_lung_R_S8 = new THREE.MeshLambertMaterial({});
+        mat_lung_R_S9 = new THREE.MeshLambertMaterial({});
+        mat_lung_R_S10 = new THREE.MeshLambertMaterial({});
+
+        mat_lung_segments = [mat_lung_L_S1_2, mat_lung_L_S3, mat_lung_L_S4, mat_lung_L_S5, mat_lung_L_S6, mat_lung_L_S7_8, mat_lung_L_S9, mat_lung_L_S10, mat_lung_R_S1, mat_lung_R_S2, mat_lung_R_S3, mat_lung_R_S4, mat_lung_R_S5, mat_lung_R_S6, mat_lung_R_S7, mat_lung_R_S8, mat_lung_R_S9, mat_lung_R_S10];
+
+        UpdateDisplay();
+
+        //添加模型
+        var manager = new THREE.LoadingManager();
+        var objLoader = new THREE.OBJLoader(manager);
+        var mtlLoader = new THREE.MTLLoader(manager);
+        var obmloader = new THREE.OBMLoader(manager);
+
+        manager.onLoad = function() {
+
+            console.log('Loading complete!');
+
+        };
+        manager.onProgress = function(url, itemsLoaded, itemsTotal) {
+            current_progress = itemsLoaded / itemsTotal * 100;
+
+            console.log('Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
+        };
+
+        group_lung = new THREE.Group();
+        scene.add(group_lung);
+
+        mtlLoader.setPath('../static/obj/lung/');
+        objLoader.setPath('../static/obj/lung/');
+        obmloader.setPath('../static/obj/lung/');
+
+        mtlLoader.load('bro2.mtl', function(materials) {
+            materials.preload();
+            obmloader.setMaterials(materials);
+
+            obmloader.load('bro2.obm', function(object) {
+                object.traverse(function(child) {
+                    if (child instanceof THREE.Mesh) {
+                        console.log(child.material.length);
+                        var materials = child.material;
+                        for (var i = 0; i < materials.length; i++) {
+                            switch (materials[i].name) {
+                                case "L_S1_2SG":
+                                    materials[i].color.setHex(color_L_S1_2);
+                                    break;
+                                case "L_S3SG":
+                                    materials[i].color.setHex(color_L_S3);
+                                    break;
+                                case "L_S4SG":
+                                    materials[i].color.setHex(color_L_S4);
+                                    break;
+                                case "L_S5SG":
+                                    materials[i].color.setHex(color_L_S5);
+                                    break;
+                                case "L_S6SG":
+                                    materials[i].color.setHex(color_L_S6);
+                                    break;
+                                case "L_S7_8SG":
+                                    materials[i].color.setHex(color_L_S7_8);
+                                    break;
+                                case "L_S9SG":
+                                    materials[i].color.setHex(color_L_S9);
+                                    break;
+                                case "L_S10SG":
+                                    materials[i].color.setHex(color_L_S10);
+                                    break;
+                                case "R_S1SG":
+                                    materials[i].color.setHex(color_R_S1);
+                                    break;
+                                case "R_S2SG":
+                                    materials[i].color.setHex(color_R_S2);
+                                    break;
+                                case "R_S3SG":
+                                    materials[i].color.setHex(color_R_S3);
+                                    break;
+                                case "R_S4SG":
+                                    materials[i].color.setHex(color_R_S4);
+                                    break;
+                                case "R_S5SG":
+                                    materials[i].color.setHex(color_R_S5);
+                                    break;
+                                case "R_S6SG":
+                                    materials[i].color.setHex(color_R_S6);
+                                    break;
+                                case "R_S7SG":
+                                    materials[i].color.setHex(color_R_S7);
+                                    break;
+                                case "R_S8SG":
+                                    materials[i].color.setHex(color_R_S8);
+                                    break;
+                                case "R_S9SG":
+                                    materials[i].color.setHex(color_R_S9);
+                                    break;
+                                case "R_S10SG":
+                                    materials[i].color.setHex(color_R_S10);
+                                    break;
+
+
+                            }
+                        }
+                        scene.add(child);
+                    }
+                });
+            });
+        });
+
+
+        obmloader.load('Lung_L_S1_2.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_L_S1_2;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_L_S3.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_L_S3;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_L_S4.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_L_S4;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_L_S5.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_L_S5;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_L_S6.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_L_S6;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_L_S7_8.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_L_S7_8;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_L_S9.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_L_S9;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_L_S10.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_L_S10;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_R_S1.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S1;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_R_S2.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S2;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_R_S3.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S3;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_R_S4.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S4;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_R_S5.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S5;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_R_S6.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S6;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_R_S7.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S7;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_R_S8.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S8;
+                }
+                group_lung.add(child);
+            });
+
+        });
+
+        obmloader.load('Lung_R_S9.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S9;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        obmloader.load('Lung_R_S10.obm', function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = mat_lung_R_S10;
+                }
+                group_lung.add(child);
+            });
+        });
+
+        stats = new Stats();
+        //$(container).append(stats.dom);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.target.set(0, 0.7, 0);
+        controls.rotateSpeed = 0.2;
+        controls.maxDistance = 7;
+        controls.minDistance = 3;
+
+        raycaster = new THREE.Raycaster();
+        mouse = new THREE.Vector2();
+
+        window.addEventListener('resize', onWindowResize, false);
+        //document.addEventListener('mousedown', onDocumentMouseDown, false);
+        //document.addEventListener('touchstart', onDocumentTouchStart, false);
+    }
+
+    $("canvas").on("click", function(e) {
+        e.preventDefault();
+        mouse.x = (e.offsetX / canvasParent.width()) * 2 - 1;
+        mouse.y = -(e.offsetY / canvasParent.height()) * 2 + 1;
+        raycastSegment();
+    });
+
+    $("canvas").on("tap", function(e) {
+        e.preventDefault();
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+        raycastSegment();
+    });
+
+    $('#displaytoggle').change(function() {
+        if (this.checked) {
+            displaymode = true;
+        } else {
+            displaymode = false;
+        }
+        UpdateDisplay();
+    });
+
+    function raycastSegment() {
+        raycaster.setFromCamera(mouse, camera);
+        var intersects = raycaster.intersectObjects(group_lung.children);
+        if (intersects.length > 0) {
+            target_mat = intersects[0].object.material;
+        } else {
+            target_mat = null;
+        }
+        UpdateDisplay();
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        renderer.render(scene, camera);
+        controls.update();
+        stats.update();
+        TWEEN.update();
+    }
+
+    function onWindowResize() {
+        camera.aspect = canvasParent.width() / canvasParent.height();
+        camera.updateProjectionMatrix();
+        renderer.setSize(canvasParent.width(), canvasParent.height());
+
+    }
+
+</script>
+{% endblock %}

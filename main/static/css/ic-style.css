@@ -1,0 +1,40 @@
+@font-face {
+    font-family: Oswald-Regular;
+    src: url("../font/Oswald-Regular.ttf");
+}
+
+@font-face {
+    font-family: Oswald-Light;
+    src: url("../font/Oswald-Light.ttf");
+}
+
+body,
+button,
+input,
+select,
+textarea{
+    font-family: "Oswald-Regular";
+}
+
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span{
+    font-family: "Oswald-Regular";
+}
+
+.ic-card{
+    border-radius: 10px;
+}
+
+.box-shadow{
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, .05);
+}
+.overflow-hide{
+    overflow: hidden;
+}
