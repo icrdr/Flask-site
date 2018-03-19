@@ -12,15 +12,10 @@ def index():
 	return render_template("index.html",
 	title = title)
 
-#experiment lung show
+#experiment lung segment display
 @app.route("/experiment/lungSeg")
 def lungSeg():
     return render_template("lungSeg.html")
-
-#experiment lung show
-@app.route("/experiment/simplePY")
-def simplePY():
-    return render_template("simplePY.html")
 	
 #404
 @app.errorhandler(404)
