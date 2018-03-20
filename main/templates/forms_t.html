@@ -43,32 +43,47 @@
             </ul>
         </div>
     </nav>
-    
+
     <script type=text/javascript>
         $(function() {
             $('form').on('submit', function(e) {
                 e.preventDefault();
-                var post_data=$('form').serialize();
+                var post_data = $('form').serialize();
                 $.ajax({
-                    data : post_data,
-                    type : 'POST',
-                    url : '/process',
-                    success : function(data){
+                    data: post_data,
+                    type: 'POST',
+                    url: '/process',
+                    success: function(data) {
                         $('#output').html(data.output);
                     }
                 })
             });
         });
-
     </script>
+
     <h1>simply math</h1>
-    <form action="/" method="POST">
-        <input id = "input_a" type="text" name="input_a" />
-        <input id = "input_b" type="text" name="input_b" />
-        <input type="hidden" name="csrf_token" value="{{ csrf_token()}}"/>
-        <input type="submit" value="Calc"/>
+    <form action="" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token()}}" />
+        <div class="mb-2">
+            <input id="input_a" type="text" name="input_a" /> +
+            <input id="input_b" type="text" name="input_b" />
+        </div>
+        <div>
+            <input type="submit" class="btn btn-dark" value="Calc" />
+        </div>
     </form>
-    <p class = "h4" id = "output">output here</p>
+    <p class="h4" id="output">output here</p>
+
+    <hr>
+
+    <h1>login</h1>
+    <form action="" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token()}}" />
+        <input id="info" type="text" name="info" value="{{request.form.info}}"/>
+        <input type="submit" class="btn btn-dark" value="Submit">
+    </form>
+
+    <h3>{{error}}</h3>
 </body>
 
 </html>
