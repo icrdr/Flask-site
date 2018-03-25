@@ -15,11 +15,6 @@ def homepage():
 def lungSeg_page():
     return render_template("lungSeg.html")
 
-#experiment handdraw shader
-@app.route("/experiment/handDraw")
-def lungSeg_page():
-    return render_template("lungSeg.html")
-
 #404
 @app.errorhandler(404)
 def page_not_found(e):
