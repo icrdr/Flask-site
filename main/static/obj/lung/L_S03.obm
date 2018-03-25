@@ -789,10 +789,10 @@ v -859 -165 581
 v -94 -86 167
 v -65 -89 159
 v -150 -42 188
-mtllib Lung_L_S3.mtl
+mtllib L_S03.mtl
 o default
 s 1
-o Lung_L_S3 group3
+o L_S03
 usemtl initialShadingGroup
 f 49 397 598 400
 f 348 -352 -200 198

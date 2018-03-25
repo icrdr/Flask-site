@@ -881,10 +881,10 @@ v -319 -167 417
 v -54 -172 251
 v 111 249 -389
 v -186 -113 301
-mtllib Lung_L_S1_2.mtl
+mtllib L_S12.mtl
 o default
 s 1
-o Lung_L_S1_2 group3
+o L_S12
 usemtl initialShadingGroup
 f 43 443 665 446
 f 400 -398 -221 219

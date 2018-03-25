@@ -293,10 +293,10 @@ v 770 -652 596
 v -1531 -1216 150
 v 840 1776 -1172
 v 840 -1844 -245
-mtllib Lung_R_S9.mtl
+mtllib R_S09.mtl
 o default
 s 1
-o Lung_R_S9 group4
+o R_S09
 usemtl initialShadingGroup
 f 85 4 84 229
 f -1 -1 -1 0

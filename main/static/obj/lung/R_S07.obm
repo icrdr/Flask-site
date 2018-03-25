@@ -4337,10 +4337,10 @@ v -557 45 -865
 v 182 -13 164
 v -290 398 126
 v 161 -8 143
-mtllib Lung_R_S7.mtl
+mtllib R_S07.mtl
 o default
 s 1
-o Lung_R_S7 group4
+o R_S07
 usemtl initialShadingGroup
 f 1 3255 1087 3262
 f 3254 -2710 1084 -2175

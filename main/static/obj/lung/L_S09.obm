@@ -441,10 +441,10 @@ v 21 398 68
 v 21 377 66
 v -120 141 221
 v -304 32 -133
-mtllib Lung_L_S9.mtl
+mtllib L_S09.mtl
 o default
 s 1
-o Lung_L_S9 group3
+o L_S09
 usemtl initialShadingGroup
 f 23 223 337 226
 s 2

@@ -1363,10 +1363,10 @@ v -102 313 -31
 v -615 -79 13
 v -244 6 -28
 v 452 -18 72
-mtllib Lung_L_S7_8.mtl
+mtllib L_S78.mtl
 o default
 s 1
-o Lung_L_S7_8 group3
+o L_S78
 usemtl initialShadingGroup
 f 74 684 1029 687
 f 610 -625 -344 342

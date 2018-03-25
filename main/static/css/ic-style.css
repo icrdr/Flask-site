@@ -1,19 +1,11 @@
-@font-face {
-    font-family: Oswald-Regular;
-    src: url("../font/Oswald-Regular.ttf");
-}
-
-@font-face {
-    font-family: Oswald-Light;
-    src: url("../font/Oswald-Light.ttf");
-}
+@import url('https://fonts.googleapis.com/css?family=Lobster|Roboto+Slab|Source+Sans+Pro');
 
 body,
 button,
 input,
 select,
 textarea{
-    font-family: "Oswald-Regular";
+    font-family: 'Lobster', cursive;
 }
 
 a,
@@ -25,7 +17,7 @@ h5,
 h6,
 p,
 span{
-    font-family: "Oswald-Regular";
+    font-family: 'Roboto Slab', serif;
 }
 
 .ic-card{

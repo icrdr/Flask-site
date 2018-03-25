@@ -399,10 +399,10 @@ v 120 8 39
 v 128 -37 136
 v 140 -203 419
 v -20 124 -223
-mtllib Lung_R_S1.mtl
+mtllib R_S01.mtl
 o default
 s 1
-o Lung_R_S1 group4
+o R_S01
 usemtl initialShadingGroup
 f 15 202 304 205
 f 187 -134 -101 99

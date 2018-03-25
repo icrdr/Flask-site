@@ -637,10 +637,10 @@ v -209 4 -25
 v 372 -272 546
 v -454 47 -234
 v 1029 76 -128
-mtllib Lung_L_S6.mtl
+mtllib L_S06.mtl
 o default
 s 1
-o Lung_L_S6 group3
+o L_S06
 usemtl initialShadingGroup
 f 132 321 485 324
 f 189 -286 -163 161
