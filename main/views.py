@@ -15,6 +15,11 @@ def homepage():
 def lungSeg_page():
     return render_template("lungSeg.html")
 
+#experiment stipplingShader
+@app.route("/experiment/stippling")
+def stippling_page():
+    return render_template("stippling.html")
+
 #404
 @app.errorhandler(404)
 def page_not_found(e):

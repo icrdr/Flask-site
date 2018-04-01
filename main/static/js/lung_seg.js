@@ -39,7 +39,7 @@ function progress() {
 
   if (progress_meta >= 100) {
     window.clearInterval(progress_interval);
-    $("#mask-container").hide(1500);
+    $("#mask-container").hide(500);
   }
 }
 
