@@ -9,7 +9,7 @@ var renderer = new THREE.WebGLRenderer({
 renderer.setSize(width, height);
 renderer.setClearColor(0xffffff, 0);
 $(canvas).append(renderer.domElement);
-renderer.shadowMapEnabled = true;
+renderer.shadowMap.enabled = true;
 renderer.shadowMapSoft = true;
 
 //缓存
@@ -282,7 +282,7 @@ FXAAPass.uniforms.resolution.value.set(1 / width, 1 / height);
 //FXAAPass.renderToScreen = true;
 
 composer.addPass(RenderPass);
-//composer.addPass(stipplingPass);
+composer.addPass(stipplingPass);
 composer.addPass(edgePass);
 composer.addPass(FXAAPass);
 
