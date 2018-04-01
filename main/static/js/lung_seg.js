@@ -49,7 +49,7 @@ function UpdateDisplay() {
   if(f_seg){
     $("#info-text").html(seg_dict[f_seg.name].info);
   }else{
-    $("#info-text").html("Touch it");
+    $("#info-text").html("Touch it👏");
   }
 
   if (!displaymode) {

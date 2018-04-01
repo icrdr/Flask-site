@@ -10,7 +10,6 @@ renderer.setSize(width, height);
 renderer.setClearColor(0xffffff, 0);
 $(canvas).append(renderer.domElement);
 renderer.shadowMap.enabled = true;
-renderer.shadowMapSoft = true;
 
 //缓存
 var bufferA = new THREE.WebGLRenderTarget({
@@ -18,12 +17,17 @@ var bufferA = new THREE.WebGLRenderTarget({
   depthBuffer: true
 });
 bufferA.setSize(width, height);
-bufferA.depthTexture = new THREE.DepthTexture();
+
+var bufferB = new THREE.WebGLRenderTarget({
+  stencilBuffer: false,
+  depthBuffer: true
+});
+bufferB.setSize(width, height);
 
 //场景和摄像机
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 10000);
-camera.position.set(0.6, 5, -10);
+var camera = new THREE.PerspectiveCamera(50, width / height, 3, 50);
+camera.position.set(0, 5, -10);
 
 //设置网格
 var helper = new THREE.GridHelper(1000, 40, 0x303030, 0x303030);
@@ -35,8 +39,9 @@ scene.add(group);
 
 //设置光源
 var lDir = new THREE.DirectionalLight(0xffffff, 2.0);
-lDir.position.set(5, 3, -5);
+lDir.position.set(5, 3, 3);
 lDir.castShadow = true;
+
 group.add(lDir);
 var lAmb = new THREE.AmbientLight(0xffffff, 0.01);
 scene.add(lAmb);
@@ -57,8 +62,9 @@ manager.onProgress = function(url, itemsLoaded, itemsTotal) {
   console.log('Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
 };
 //添加材质
-var mtl_normal = new THREE.MeshNormalMaterial();
-var mat_Lambert = new THREE.MeshPhongMaterial({
+var mNormal = new THREE.MeshNormalMaterial();
+var mDepth = new THREE.MeshDepthMaterial();
+var mLambert = new THREE.MeshPhongMaterial({
   color: 0x999999
 });
 
@@ -66,7 +72,7 @@ var mat_Lambert = new THREE.MeshPhongMaterial({
 obmloader.load('liver.obm', function(object) {
   object.traverse(function(node) {
     if (node instanceof THREE.Mesh) {
-      node.material = mat_Lambert;
+      node.material = mLambert;
       node.castShadow = true;
       node.receiveShadow = true;
       scene.add(node);
@@ -178,7 +184,7 @@ var stipplingShader = {
     },
     inkColor: {
       type: 'v3',
-      value: new THREE.Vector3(0.3, 0.3, 0.3)
+      value: new THREE.Vector3(0.35, 0.35, 0.35)
     }
   },
   vertexShader: sVERTEX,
@@ -187,7 +193,7 @@ var stipplingShader = {
 
 var eFRAGMENT =
   `
-#define Sensitivity vec2(0.3, 500)
+#define Sensitivity vec2(0.5, 10)
 #define edgeColor vec3(0.0,0.0,0.0)
 
 uniform sampler2D tDiffuse;
@@ -260,7 +266,7 @@ var edgeShader = {
     },
     inkColor: {
       type: 'v3',
-      value: new THREE.Vector3(0.3, 0.3, 0.3)
+      value: new THREE.Vector3(0.35, 0.35, 0.35)
     }
   },
   vertexShader: sVERTEX,
@@ -295,6 +301,8 @@ var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = false;
 controls.target.set(0.6, 5, -0.6);
 controls.rotateSpeed = 1;
+controls.maxDistance = 15;
+controls.minDistance = 7;
 
 window.addEventListener('resize', onWindowResize, false);
 
@@ -319,20 +327,29 @@ function progress() {
 function animate() {
   requestAnimationFrame(animate);
   //group.rotation.y += 0.005;
+  group.position.set(camera.position.x,camera.position.y,camera.position.z);
+  group.rotation.set(camera.rotation.x,camera.rotation.y,camera.rotation.z);
 
   for (i in scene.children) {
     if (scene.children[i] instanceof THREE.Mesh) {
-      scene.children[i].material = mtl_normal;
+      scene.children[i].material = mNormal;
     }
   }
   renderer.render(scene, camera, bufferA);
+
+  for (i in scene.children) {
+    if (scene.children[i] instanceof THREE.Mesh) {
+      scene.children[i].material = mDepth;
+    }
+  }
+  renderer.render(scene, camera, bufferB);
   edgePass.uniforms.tNormal.value = bufferA.texture;
-  edgePass.uniforms.tDepth.value = bufferA.depthTexture;
+  edgePass.uniforms.tDepth.value = bufferB.texture;
   stipplingPass.uniforms.cPos.value = camera.position;
 
   for (i in scene.children) {
     if (scene.children[i] instanceof THREE.Mesh) {
-      scene.children[i].material = mat_Lambert;
+      scene.children[i].material = mLambert;
     }
   }
 
@@ -353,6 +370,7 @@ function onWindowResize() {
   FXAAPass.uniforms.resolution.value.set(1 / _w, 1 / _h);
   renderer.setSize(_w, _h);
   bufferA.setSize(_w, _h);
+  bufferB.setSize(_w, _h);
   composer.setSize(_w, _h);
 }
 

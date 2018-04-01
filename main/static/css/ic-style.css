@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Lobster|Roboto+Slab|Source+Sans+Pro');
+@import url('https://fonts.googleapis.com/css?family=Oswald|Roboto+Condensed|Share+Tech');
 
 body,
 button,
 input,
 select,
 textarea{
-    font-family: 'Lobster', cursive;
+    font-family: 'Share Tech', sans-serif;
 }
 
 a,
@@ -17,7 +18,7 @@ h5,
 h6,
 p,
 span{
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Share Tech', sans-serif;
 }
 
 .ic-card{
