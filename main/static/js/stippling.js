@@ -145,8 +145,8 @@ float stippling(float density, float size){
 
   float color = 0.0;
 
-  for(float i = -7.0; i < 9.0; i++){
-    for(float j = -7.0; j < 9.0; j++){
+  for(float i = -2.0; i < 4.0; i++){
+    for(float j = -2.0; j < 4.0; j++){
       vec2 onGrid = vec2(
         floor(uv.x) + 1.0 * i,
         floor(uv.y) + 1.0 * j
@@ -157,7 +157,7 @@ float stippling(float density, float size){
           onGrid.y += 0.578;
       }
 
-      onGrid += (rand(randCO) * 2.0 - 1.0) * 0.3;
+      onGrid += (rand(randCO) * 2.0 - 1.0) * 0.2;
 
       vec2 dUv = vec2(
         (uv.x - onGrid.x)/(size * 1.0),
