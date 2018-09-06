@@ -7,19 +7,19 @@ var selected;
 var displaymode = false;
 var model_dict = {
   "a": {
-    color: "0xdf5875",
+    color: "#df5875",
     info: "Hepatic Artery"
   },
   "v": {
-    color: "0x71c8e1",
+    color: "#71c8e1",
     info: "Hepatic Vein"
   },
   "p": {
-    color: "0x39b9bb",
+    color: "#39b9bb",
     info: "Portal Vein"
   },
   "t": {
-    color: "0xed87ab",
+    color: "#ed87ab",
     info: "Tumor"
   },
 };
@@ -41,30 +41,35 @@ function progress() {
   }
 }
 
+function col2Hex(col_str) {
+  return col_str.replace('#', '0x')
+}
 //显示效果更新
 var fadeTime = 100;
 
 function UpdateDisplay() {
   if (selected) {
     $("#info-text").html(model_dict[selected.name].info);
+    $("#info-text").css('color', model_dict[selected.name].color);
   } else {
+    $("#info-text").css('color', '#ed87ab');
     $("#info-text").html("Touch it!");
   }
 
   
 
   if (selected) {
-    selected.material.color.setHex(model_dict[selected.name].color)
+    selected.material.color.setHex(col2Hex(model_dict[selected.name].color))
     for (i in grp.children) {
       var sub = grp.children[i]
       if(sub != selected){
-        sub.material.color.setHex(0xf8dde7)
+        sub.material.color.setHex(col2Hex('0xf8dde7'))
       }
     }
   }else{
     for (i in grp.children) {
       var sub = grp.children[i]
-      sub.material.color.setHex(model_dict[sub.name].color)
+      sub.material.color.setHex(col2Hex(model_dict[sub.name].color))
     }
   }
 }
@@ -127,7 +132,7 @@ function init() {
     object.traverse(function (child) {
       if (child instanceof THREE.Mesh) {
         child.material = new THREE.MeshLambertMaterial();
-        child.material.color.setHex("0xffc6db");
+        child.material.color.setHex(col2Hex("0xffc6db"))
         child.material.transparent = true
         child.material.opacity = 0.3
         liver.add(child);
@@ -143,7 +148,7 @@ function init() {
           child.material = new THREE.MeshLambertMaterial();
           child.material.metalness = 0.0
           child.material.roughness = 1.0
-          child.material.color.setHex(model_dict[child.name].color);
+          child.material.color.setHex(col2Hex(model_dict[child.name].color))
           grp.add(child);
         }
       });
