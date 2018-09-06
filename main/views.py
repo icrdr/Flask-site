@@ -10,9 +10,9 @@ from .forms import *
 def homepage():
 	return render_template("index.html")
 
-#experiment lung segment display
+#experiment liverDisplay
 @app.route("/experiment/liverDisplay")
-def lungSeg_page():
+def liver_page():
     return render_template("liverDisplay.html")
 
 #experiment lung segment display
