@@ -11,6 +11,11 @@ def homepage():
 	return render_template("index.html")
 
 #experiment lung segment display
+@app.route("/experiment/liverDisplay")
+def lungSeg_page():
+    return render_template("liverDisplay.html")
+
+#experiment lung segment display
 @app.route("/experiment/lungSeg")
 def lungSeg_page():
     return render_template("lungSeg.html")

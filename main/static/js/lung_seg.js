@@ -185,6 +185,7 @@ function init() {
       object.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
           child.material = new THREE.MeshLambertMaterial();
+          console.log(child)
           child.material.color.setHex(seg_dict[child.name].color);
           grp_lung.add(child);
         }

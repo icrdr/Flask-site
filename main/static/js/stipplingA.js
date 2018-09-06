@@ -114,7 +114,6 @@ uniform float sDensity;
 uniform float sSize;
 uniform int sType;
 
-
 varying vec2 vUv;
 
 vec2 rand(vec2 co){
@@ -342,6 +341,7 @@ gui.add(stipplingPass.uniforms.sType, 'value', {
 }).name("shape type");
 $("#canvas-container").append(gui.domElement);
 $(gui.domElement).attr( "style", "position:absolute; top:0; right:0" );
+
 // CONTRLS
 // --------------------------------------------
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -353,7 +353,7 @@ controls.minDistance = 7;
 
 window.addEventListener('resize', onWindowResize, false);
 
-//读取进度条
+//PROGRESS
 var progress_meta = 0;
 var current_progress = 0;
 var progress_interval = setInterval(progress, 1);
