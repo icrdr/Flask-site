@@ -154,7 +154,7 @@ function init() {
   liver.rotation.set(0, 3.14, 0);
   //记录帧数
   stats = new Stats();
-  $("#canvas-container").append(stats.dom);
+  //$("#canvas-container").append(stats.dom);
 
   //镜头控制
   controls = new THREE.OrbitControls(camera, renderer.domElement);
