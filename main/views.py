@@ -1,10 +1,19 @@
-from flask import render_template, request, jsonify, flash, redirect, url_for
-from . import app
 
+from flask import render_template, request, jsonify, flash, redirect, url_for, make_response
+from . import app
+import os
 #导入所有表单
 from .forms import *
 
+
 #主站
+@app.route('/<path>')
+def today(path):
+    base_dir = os.path.dirname(__file__)
+    resp = make_response(open(os.path.join(base_dir, path)).read())
+    resp.headers["Content-type"]="application/json;charset=UTF-8"
+    return resp
+
 @app.route("/")
 @app.route("/index")
 def homepage():
