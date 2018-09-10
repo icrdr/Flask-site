@@ -1,9 +1,24 @@
 {% extends "base_navbar.html" %}
 
 {% block title %}
-<title>icrdr's Blog</title>
+<title>icrdr's experiments</title>
 {% endblock %}
     
 {% block content %}
 <h1>welcome</h1>
+<p>This is a simple site for testing webgl.</p>
+<ul>
+    <li>
+        <a href="/experiment/lungSeg">Lung Segment Display</a>
+    </li>
+    <li>
+        <a href="/experiment/stippling">Stippling Shader</a>
+        <div>A simple glsl shader is used to simulate stippling style.</div>
+    </li>
+    <li>
+        <a href="/experiment/liverDisplay">liver CT reconstruction</a>
+        <div>It shows a 3D liver reconstructed from DICOM, including all major blood vessels and tumor.</div>
+    </li>
+</ul>
+<a href=""></a>
 {% endblock %}

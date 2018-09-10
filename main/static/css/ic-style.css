@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Lobster|Roboto+Slab|Source+Sans+Pro');
-@import url('https://fonts.googleapis.com/css?family=Oswald|Roboto+Condensed|Share+Tech');
+@import url('https://fonts.googleapis.com/css?family=Amaranth|Roboto');
 @import url('https://fonts.googleapis.com/css?family=Baloo+Tammudu|Boogaloo|Lobster|Oleo+Script');
 
 body,
@@ -7,19 +6,23 @@ button,
 input,
 select,
 textarea{
-    font-family: 'Share Tech', sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 
-a,
+
 h1,
 h2,
 h3,
 h4,
 h5,
-h6,
+h6{
+    font-family: 'Amaranth', sans-serif;
+}
+
+a,
 p,
 span{
-    font-family: 'Share Tech', sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 
 .ic-card{
@@ -32,3 +35,55 @@ span{
 .overflow-hide{
     overflow: hidden;
 }
+.flex-v{
+    display:flex;
+    flex-direction:column;
+  }
+  
+  .flex-u{
+    display:flex;
+    flex-direction:row;
+  }
+  .flex-j-b{
+    justify-content: space-between;
+  }
+  
+  .flex-j-a{
+    justify-content: space-around;
+  }
+  .flex-j-c{
+    justify-content: center;
+  }
+  .flex-j-e{
+    justify-content: flex-end;
+  }
+  
+  .flex-j-s{
+    justify-content: flex-start;
+  }
+  
+  .flex-a-c{
+    align-items:center;
+  }
+  
+  .flex-a-e{
+    align-items:flex-end;
+  }
+  
+  .flex-a-s{
+    align-items:flex-start;
+  }
+  
+  .flex-vc{
+    display: flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .flex-uc{
+    display: flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+  }
